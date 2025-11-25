@@ -1,6 +1,12 @@
 import TaskItem from "./TaskItem";
+import { Task } from "../types/Task";
 
-const TaskList = ({ tasks, onDeleteTask }) => {
+interface TaskListProps {
+  tasks: Task[];
+  onDeleteTask: (id: number) => void;
+}
+
+const TaskList = ({ tasks, onDeleteTask }: TaskListProps) => {
   return (
     <ul className="task-list">
       {tasks.map((task) => {

@@ -1,15 +1,16 @@
 import { useState } from "react";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
+import { Task } from "./types/Task";
 
 function App() {
-  const [tasks, setTasks] = useState([
+  const [tasks, setTasks] = useState<Task[]>([
     { id: 1, text: "Learn React", completed: false },
     { id: 2, text: "Build TaskMaster", completed: false },
   ]);
 
-  const addTask = (text) => {
-    const newTask = {
+  const addTask = (text: string) => {
+    const newTask: Task = {
       id: Date.now(),
       text,
       completed: false,
@@ -18,7 +19,7 @@ function App() {
     setTasks((prev) => [...prev, newTask]);
   };
 
-  const deleteTask = (id) => {
+  const deleteTask = (id: number): void => {
     setTasks((prev) => prev.filter((task) => task.id !== id));
   };
 
