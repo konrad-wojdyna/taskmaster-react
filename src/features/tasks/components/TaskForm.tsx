@@ -1,18 +1,17 @@
 import { useState, ChangeEvent, FormEvent } from "react";
+import { useAppDispatch } from "../../../store/hooks";
+import { addTask } from "../taskSlice";
 
-interface TaskFormProps {
-  onAddTask: (text: string) => void;
-}
-
-const TaskForm = ({ onAddTask }: TaskFormProps) => {
+const TaskForm = () => {
   const [input, setInput] = useState<string>("");
+  const dispatch = useAppDispatch();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (input.trim() === "") return;
 
-    onAddTask(input);
+    dispatch(addTask(input));
     setInput("");
   };
 

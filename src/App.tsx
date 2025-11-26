@@ -1,33 +1,15 @@
-import { useState } from "react";
 import TaskForm from "./features/tasks/components/TaskForm";
 import TaskList from "./features/tasks/components/TaskList";
-import { Task } from "./types/Task";
+import { useAppSelector } from "./store/hooks";
 
 function App() {
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: 1, text: "Learn React", completed: false },
-    { id: 2, text: "Build TaskMaster", completed: false },
-  ]);
-
-  const addTask = (text: string) => {
-    const newTask: Task = {
-      id: Date.now(),
-      text,
-      completed: false,
-    };
-
-    setTasks((prev) => [...prev, newTask]);
-  };
-
-  const deleteTask = (id: number): void => {
-    setTasks((prev) => prev.filter((task) => task.id !== id));
-  };
+  const tasks = useAppSelector((state) => state.tasks.tasks);
 
   return (
     <div className="app">
       <h1>TaskMaster React</h1>
-      <TaskForm onAddTask={addTask} />
-      <TaskList tasks={tasks} onDeleteTask={deleteTask} />
+      <TaskForm />
+      <TaskList tasks={tasks} />
     </div>
   );
 }
