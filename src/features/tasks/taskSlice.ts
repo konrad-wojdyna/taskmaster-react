@@ -1,8 +1,10 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Task } from "../../types/Task";
 
 interface TaskState {
   tasks: Task[];
+  loading: boolean;
+  error: string | null;
 }
 
 const initialState: TaskState = {
@@ -10,7 +12,19 @@ const initialState: TaskState = {
     { id: 1, text: "Learn React", completed: false },
     { id: 2, text: "Build TaskMaster", completed: false },
   ],
+  loading: false,
+  error: null,
 };
+
+export const fetchTasks = createAsyncThunk("tasks/fetchTasks", async () => {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  return [
+    { id: 1, text: "Learn Redux Toolkit", completed: false },
+    { id: 2, text: "Master Async Thunks", completed: false },
+    { id: 3, text: "Build Real Apps", completed: true },
+  ];
+});
 
 const taskSlices = createSlice({
   name: "tasks",
@@ -35,6 +49,21 @@ const taskSlices = createSlice({
         task.completed = !task.completed;
       }
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchTasks.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchTasks.fulfilled, (state, action) => {
+        state.loading = false;
+        state.tasks = action.payload;
+      })
+      .addCase(fetchTasks.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to fetch tasks";
+      });
   },
 });
 
