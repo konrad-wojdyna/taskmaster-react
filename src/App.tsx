@@ -1,20 +1,15 @@
 import { useEffect } from "react";
-import TaskForm from "./features/tasks/components/TaskForm";
-import TaskList from "./features/tasks/components/TaskList";
-import { useAppDispatch, useAppSelector } from "./store/hooks";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { useAppDispatch } from "./store/hooks";
 import { fetchTasks } from "./features/tasks/taskSlice";
-import {
-  selectTasks,
-  selectLoading,
-  selectError,
-  selectTaskCount,
-} from "./features/tasks/tasksSelectors";
+
+import HomePage from "./pages/HomePage";
+import TasksPage from "./pages/TasksPage";
+import StatsPage from "./pages/StatsPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import TaskDetailsPage from "./pages/TaskDetailsPage";
 
 function App() {
-  const tasks = useAppSelector(selectTasks);
-  const loading = useAppSelector(selectLoading);
-  const error = useAppSelector(selectError);
-  const tasksCount = useAppSelector(selectTaskCount);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -22,21 +17,45 @@ function App() {
   }, [dispatch]);
 
   return (
-    <div className="app">
-      <h1>TaskMaster React</h1>
-      {loading && <p>Loading tasks...</p>}
-      {error && <p style={{ color: "red" }}>Error: {error}</p>}
-
-      <div>
-        <p>
-          Total: {tasksCount.total} | Active: {tasksCount.active} | Completed:{" "}
-          {tasksCount.completed}
-        </p>
+    <BrowserRouter>
+      <div className="main-h-screen bg-slate-50">
+        <nav className="bg-white shadow-md">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between h-16">
+              <div className="flex space-x-8">
+                <Link
+                  to="/"
+                  className="inline-flex items-center px-1 pt-1 text-gray-900 font-medium hover:text-blue-600"
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/tasks"
+                  className="inline-flex items-center px-1 pt-1 text-gray-900 font-medium hover:text-blue-600"
+                >
+                  Tasks
+                </Link>
+                <Link
+                  to="/stats"
+                  className="inline-flex items-center px-1 pt-1 text-gray-900 font-medium hover:text-blue-600"
+                >
+                  Statistics
+                </Link>
+              </div>
+            </div>
+          </div>
+        </nav>
+        <main className="max-w-7xl mx-auto">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/tasks" element={<TasksPage />} />
+            <Route path="/tasks/:id" element={<TaskDetailsPage />} />
+            <Route path="/stats" element={<StatsPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </main>
       </div>
-
-      <TaskForm />
-      <TaskList tasks={tasks} />
-    </div>
+    </BrowserRouter>
   );
 }
 
