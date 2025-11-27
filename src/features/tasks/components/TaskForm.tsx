@@ -1,29 +1,31 @@
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useAppDispatch } from "../../../store/hooks";
 import { addTask } from "../taskSlice";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { taskSchema, TaskFormData } from "../schemas/taskSchema";
 
 const TaskForm = () => {
-  const [input, setInput] = useState<string>("");
   const dispatch = useAppDispatch();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<TaskFormData>({
+    resolver: zodResolver(taskSchema),
+  });
 
-    if (input.trim() === "") return;
-
-    dispatch(addTask(input));
-    setInput("");
-  };
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
+  const onSubmit = (data: TaskFormData) => {
+    dispatch(addTask(data.text));
+    reset();
   };
 
   return (
     <Card className="p-6">
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <label htmlFor="task" className="block text-sm font-medium mb-2">
             New Task
@@ -31,18 +33,21 @@ const TaskForm = () => {
           <input
             id="task"
             type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
+            {...register("text")}
             placeholder="Enter task description..."
             className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          {errors.text && (
+            <p className="text-red-600 text-sm mt-1">{errors.text.message}</p>
+          )}
         </div>
         <Button
           type="submit"
           className="w-full cursor-pointer bg-red-400
          text-white"
+          disabled={isSubmitting}
         >
-          Add Task
+          {isSubmitting ? "Adding..." : "Add Task"}
         </Button>
       </form>
     </Card>
