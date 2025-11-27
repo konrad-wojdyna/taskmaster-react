@@ -2,6 +2,15 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { selectTasks } from "@/features/tasks/tasksSelectors";
 import { deleteTask, toggleComplete } from "@/features/tasks/taskSlice";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const TaskDetailsPage = () => {
   const { id } = useParams();
@@ -44,7 +53,36 @@ const TaskDetailsPage = () => {
       </Link>
 
       <div className="bg-white rounded-lg shadow-lg p-6">
-        <h1 className="text-3xl font-bold mb-4">{task.text}</h1>
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-3xl font-bold mb-4">{task.text}</h1>
+
+          {/* Actions Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">Actions</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Task Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleToggle}>
+                {task.completed ? "❌ Mark Incomplete" : "✅ Mark Complete"}
+              </DropdownMenuItem>
+              <DropdownMenuItem disabled>
+                ✏️ Edit (Coming Soon)
+              </DropdownMenuItem>
+              <DropdownMenuItem disabled>
+                📋 Duplicate (Coming Soon)
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={handleDelete}
+                className="text-red-600 focus:text-red-600"
+              >
+                🗑️ Delete Task
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
         <div className="space-y-4">
           <div>
